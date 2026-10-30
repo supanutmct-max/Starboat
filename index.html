@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>starboatthai</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f3f5f2;--surface:#fff;--ink:#1d2b26;--muted:#66756f;--line:#d9dfdb;--accent:#1f6f5c;--accent-ink:#fff;--warn:#b4542a;--done:#6b7f77;--head:#16365c;--head-ink:#fff;--band:#dbe9f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141b18;--surface:#1c2622;--ink:#e8efeb;--muted:#93a39c;--line:#2e3b36;--accent:#4fb89e;--accent-ink:#0c1512;--warn:#e08a5e;--done:#7b8f87;--head:#28496f;--band:#1f3347}}
+:root[data-theme="dark"]{--bg:#141b18;--surface:#1c2622;--ink:#e8efeb;--muted:#93a39c;--line:#2e3b36;--accent:#4fb89e;--accent-ink:#0c1512;--warn:#e08a5e;--done:#7b8f87;--head:#28496f;--band:#1f3347}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai",system-ui,sans-serif;line-height:1.6}
+main{max-width:1040px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:110px}
+.stat b{display:block;font-size:1.25rem}
+.stat span{color:var(--muted);font-size:.85rem}
+form{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;font-weight:500}
+.wide{grid-column:1/-1}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+textarea{min-height:76px;resize:vertical}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 14px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.actions{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.band{background:var(--band);text-align:center;font-weight:700;padding:6px 12px;border-radius:6px 6px 0 0;border:1px solid var(--line);border-bottom:0}
+.cwrap{overflow-x:auto;border:1px solid var(--line);border-radius:0 0 6px 6px}
+.ctable{min-width:680px}
+.ctable thead th{background:var(--head);color:var(--head-ink);text-align:center;font-weight:500}
+.ctable td{padding:6px 8px}
+.ctable td:first-child{text-align:center;width:56px}
+.ctable input,.ctable select{padding:5px 8px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tools input,.tools select{width:auto;flex:1;min-width:140px}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:820px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.85rem;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+tr.done .title{text-decoration:line-through;color:var(--done)}
+.title{font-weight:700}
+.note,.meta{color:var(--muted);font-size:.9rem}
+.note{white-space:pre-wrap}
+.tag{display:inline-block;padding:1px 10px;border-radius:99px;border:1px solid var(--line);font-size:.8rem;white-space:nowrap}
+.tag.doing,.tag.pass{border-color:var(--accent);color:var(--accent)}
+.tag.todo,.tag.fail{border-color:var(--warn);color:var(--warn)}
+.tag.done,.tag.pending{color:var(--done)}
+details{margin-top:6px;font-size:.9rem}
+summary{cursor:pointer;color:var(--accent)}
+.mini{min-width:0;margin-top:6px}
+.mini th,.mini td{padding:4px 8px;font-size:.85rem}
+.row-actions{display:flex;gap:6px}
+.row-actions button{padding:3px 10px;font-size:.85rem}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.warnbar{background:var(--surface);border:1px solid var(--warn);color:var(--warn);border-radius:8px;padding:10px 14px;margin:0 0 16px}
+#msg button{padding:2px 10px;font-size:.85rem;margin-left:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>starboatthai</h1>
+<p class="sub">บันทึกรายละเอียดการทำงาน: จดงาน ตรวจสอบสินค้า สถานะ และเวลาที่ใช้ ข้อมูลเก็บเป็นไฟล์ในเครื่องของคุณ และสำรองอัตโนมัติทุกสัปดาห์</p>
+<p class="warnbar" id="warn" role="alert" hidden></p>
+<div class="stats" id="stats"></div>
+
+<form id="f">
+  <label class="wide">ชื่องาน<input id="title" required maxlength="120" placeholder="เช่น ตรวจสอบสินค้าล็อตเดือนตุลาคม"></label>
+  <label>ประเภทสินค้า<input id="ptype" list="ptypes" maxlength="80" placeholder="เลือกหรือพิมพ์ประเภทใหม่"></label>
+  <label>รายละเอียดสินค้า<input id="pdesc" maxlength="200" placeholder="เช่น สี รุ่น หรือข้อสังเกตของสินค้า"></label>
+  <label>Serial สินค้า<input id="serial" maxlength="80" autocomplete="off" placeholder="เลขซีเรียลของสินค้า"></label>
+  <label>ชื่อลูกค้า<input id="customer" maxlength="80"></label>
+  <label>จังหวัด/พื้นที่<input id="area" maxlength="80"></label>
+  <label>วันที่ตรวจเช็ค<input type="date" id="cdate"></label>
+  <div class="wide">
+    <div class="band">รายการตรวจสอบคุณภาพ</div>
+    <div class="cwrap"><table class="ctable"><thead><tr><th>ลำดับ</th><th>รายการตรวจสอบ</th><th>ผลการตรวจสอบ</th><th>ผู้ตรวจสอบ</th><th>หมายเหตุ</th><th></th></tr></thead><tbody id="cbody"></tbody></table>
+    <div class="empty" id="cempty">ยังไม่มีรายการตรวจสอบ กด "เพิ่มรายการตรวจสอบ"</div></div>
+    <div style="margin-top:8px"><button type="button" id="addc">เพิ่มรายการตรวจสอบ</button></div>
+  </div>
+  <label>วันที่ทำงาน<input type="date" id="date" required></label>
+  <label>ผู้รับผิดชอบ<input id="owner" maxlength="80"></label>
+  <label>สถานะ<select id="status"><option value="todo">รอดำเนินการ</option><option value="doing">กำลังทำ</option><option value="done">เสร็จแล้ว</option></select></label>
+  <label>เวลาที่ใช้ (ชั่วโมง)<input type="number" id="hours" min="0" step="0.25" value="0"></label>
+  <label class="wide">รายละเอียด<textarea id="note" placeholder="รายละเอียดงาน ปัญหาที่พบ สิ่งที่ต้องทำต่อ"></textarea></label>
+  <div class="actions"><button class="primary" type="submit" id="save">บันทึกงาน</button><button type="button" id="cancel" hidden>ยกเลิกการแก้ไข</button></div>
+</form>
+<datalist id="ptypes"></datalist>
+
+<div class="tools">
+  <input id="q" type="search" placeholder="ค้นหางาน ลูกค้า หรือสินค้า">
+  <select id="flt"><option value="">ทุกสถานะ</option><option value="todo">รอดำเนินการ</option><option value="doing">กำลังทำ</option><option value="done">เสร็จแล้ว</option></select>
+  <button id="backup" type="button" class="primary">สำรองข้อมูลตอนนี้</button>
+  <button id="restore" type="button">กู้คืนข้อมูล</button>
+  <button id="csv" type="button">ส่งออก CSV</button>
+  <input type="file" id="file" accept=".json,application/json" hidden>
+</div>
+<p class="note" id="msg" role="status"></p>
+<div class="tablewrap"><table><thead><tr><th>วันที่</th><th>งาน</th><th>ลูกค้า / พื้นที่</th><th>สถานะ</th><th>ผลตรวจ</th><th>ชม.</th><th></th></tr></thead><tbody id="body"></tbody></table><div class="empty" id="empty" hidden>ยังไม่มีรายการ กรอกแบบฟอร์มด้านบนเพื่อเพิ่มงานแรก</div></div>
+</main>
+<script>
+const KEY="worklog.v1",L={todo:"รอดำเนินการ",doing:"กำลังทำ",done:"เสร็จแล้ว"},R={pending:"รอตรวจ",pass:"ผ่าน",fail:"ไม่ผ่าน"},SEED="โซฟา ( ล้างกาว )";
+const F=["title","ptype","pdesc","serial","customer","area","cdate","date","owner","status","hours","note"];
+let items=[],editId=null,formChecks=[],storageOk=true;
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const isDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s);
+function warn(t){const w=$("warn");w.textContent=t;w.hidden=!t}
+function say(t,undo){
+  const m=$("msg");m.textContent=t+" ";
+  if(undo){const b=document.createElement("button");b.type="button";b.textContent="เลิกทำ";b.onclick=()=>{items=undo;persist();render();say("เลิกทำแล้ว")};m.appendChild(b)}
+}
+function cleanChecks(a){
+  return Array.isArray(a)?a.filter(c=>c&&typeof c==="object"&&String(c.item||"").trim()).slice(0,200).map(c=>({item:String(c.item).trim().slice(0,200),result:R[c.result]?c.result:"pending",by:String(c.by||"").slice(0,80),note:String(c.note||"").slice(0,300)})):[];
+}
+function clean(a){
+  if(!Array.isArray(a))return[];
+  const seen=new Set();
+  return a.filter(i=>i&&typeof i==="object"&&typeof i.title==="string"&&isDate(i.date)).map(i=>{
+    let id=String(i.id||"");if(!id||seen.has(id))id=uid();seen.add(id);
+    const s=(k,n)=>String(i[k]||"").slice(0,n);
+    return{id,title:i.title.slice(0,120),ptype:s("ptype",80),pdesc:s("pdesc",200),serial:s("serial",80),customer:s("customer",80),area:s("area",80),cdate:isDate(i.cdate)?i.cdate:"",date:i.date,owner:s("owner",80),status:L[i.status]?i.status:"todo",hours:Math.max(0,Number(i.hours)||0),note:String(i.note||""),checks:cleanChecks(i.checks)};
+  });
+}
+function load(){
+  return fetch("/api/items").then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{items=clean(d);warn("")}).catch(()=>warn("เชื่อมต่อโปรแกรมไม่ได้ ตรวจสอบว่า starboatthai.py ยังทำงานอยู่"));
+}
+let saving=Promise.resolve();
+function persist(){
+  const body=JSON.stringify(items);
+  saving=saving.then(()=>fetch("/api/items",{method:"PUT",headers:{"Content-Type":"application/json"},body})).then(r=>{if(!r.ok)throw 0;warn("")}).catch(()=>warn("บันทึกลงเครื่องไม่สำเร็จ ตรวจสอบว่า starboatthai.py ยังทำงานอยู่ ก่อนปิดหน้านี้ให้กด สำรองข้อมูลตอนนี้"));
+  return true;
+}
+function renderChecks(){
+  $("cbody").innerHTML=formChecks.map((c,n)=>`<tr data-n="${n}"><td>${n+1}</td><td><input data-k="item" value="${esc(c.item)}" aria-label="รายการตรวจสอบ ${n+1}"></td><td><select data-k="result" aria-label="ผลการตรวจสอบ ${n+1}">${Object.entries(R).map(([v,t])=>`<option value="${v}"${c.result===v?" selected":""}>${t}</option>`).join("")}</select></td><td><input data-k="by" value="${esc(c.by)}" aria-label="ผู้ตรวจสอบ ${n+1}"></td><td><input data-k="note" value="${esc(c.note)}" aria-label="หมายเหตุ ${n+1}"></td><td><button type="button" data-rm="${n}">ลบ</button></td></tr>`).join("");
+  $("cempty").hidden=formChecks.length>0;
+}
+$("cbody").addEventListener("input",e=>{const tr=e.target.closest("tr");if(tr&&e.target.dataset.k&&formChecks[+tr.dataset.n])formChecks[+tr.dataset.n][e.target.dataset.k]=e.target.value});
+$("cbody").addEventListener("click",e=>{if(e.target.dataset.rm!==undefined){formChecks.splice(+e.target.dataset.rm,1);renderChecks()}});
+$("addc").onclick=()=>{formChecks.push({item:"",result:"pending",by:"",note:""});renderChecks();const r=$("cbody").querySelectorAll('input[data-k="item"]');r[r.length-1].focus()};
+function summary(ck){
+  if(!ck.length)return"-";
+  const p=ck.filter(c=>c.result==="pass").length,f=ck.filter(c=>c.result==="fail").length;
+  return `ผ่าน ${p}/${ck.length}`+(f?`, ไม่ผ่าน ${f}`:"");
+}
+function render(){
+  const q=$("q").value.trim().toLowerCase(),fl=$("flt").value;
+  const hay=i=>[i.title,i.ptype,i.pdesc,i.serial,i.customer,i.area,i.owner,i.note,i.date,i.cdate,L[i.status],...i.checks.map(c=>[c.item,c.by,c.note,R[c.result]].join(" "))].join(" ").toLowerCase();
+  const list=items.filter(i=>(!fl||i.status===fl)&&(!q||q.split(/\s+/).every(t=>hay(i).includes(t)))).sort((a,b)=>b.date.localeCompare(a.date));
+  $("body").innerHTML=list.map(i=>{
+    const sub=[i.ptype,i.pdesc].filter(Boolean).join(" - ");
+    const det=(i.checks.length||i.cdate)?`<details><summary>รายการตรวจสอบ (${i.checks.length})${i.cdate?" ตรวจเมื่อ "+esc(i.cdate):""}</summary>${i.checks.length?`<table class="mini"><thead><tr><th>ลำดับ</th><th>รายการ</th><th>ผล</th><th>ผู้ตรวจ</th><th>หมายเหตุ</th></tr></thead><tbody>${i.checks.map((c,n)=>`<tr><td>${n+1}</td><td>${esc(c.item)}</td><td><span class="tag ${c.result}">${R[c.result]}</span></td><td>${esc(c.by)}</td><td>${esc(c.note)}</td></tr>`).join("")}</tbody></table>`:""}</details>`:"";
+    return `<tr class="${i.status==="done"?"done":""}"><td>${esc(i.date)}</td><td><div class="title">${esc(i.title)}</div>${sub?`<div class="meta">${esc(sub)}</div>`:""}${i.serial?`<div class="meta">Serial: ${esc(i.serial)}</div>`:""}${i.owner?`<div class="meta">ผู้รับผิดชอบ: ${esc(i.owner)}</div>`:""}<div class="note">${esc(i.note)}</div>${det}</td><td>${esc(i.customer)}${i.area?`<div class="meta">${esc(i.area)}</div>`:""}</td><td><span class="tag ${i.status}">${L[i.status]}</span></td><td>${summary(i.checks)}</td><td>${i.hours}</td><td><div class="row-actions"><button data-e="${i.id}">แก้ไข</button><button data-d="${i.id}">ลบ</button></div></td></tr>`;
+  }).join("");
+  $("empty").textContent=items.length?"ไม่พบรายการที่ตรงกับการค้นหา ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ":"ยังไม่มีรายการ กรอกแบบฟอร์มด้านบนเพื่อเพิ่มงานแรก";
+  $("empty").hidden=list.length>0;
+  const types=[...new Set([SEED,...items.map(i=>i.ptype).filter(Boolean)])];
+  $("ptypes").innerHTML=types.map(t=>`<option value="${esc(t)}">`).join("");
+  const total=items.reduce((s,i)=>s+i.hours,0),fails=items.reduce((s,i)=>s+i.checks.filter(c=>c.result==="fail").length,0);
+  $("stats").innerHTML=[["งานทั้งหมด",items.length],["กำลังทำ",items.filter(i=>i.status==="doing").length],["เสร็จแล้ว",items.filter(i=>i.status==="done").length],["ชั่วโมงรวม",total],["ตรวจไม่ผ่าน",fails]].map(([a,b])=>`<div class="stat"><b>${b}</b><span>${a}</span></div>`).join("");
+}
+function reset(){editId=null;$("f").reset();$("date").value=today();formChecks=[];renderChecks();$("save").textContent="บันทึกงาน";$("cancel").hidden=true}
+$("date").value=today();
+$("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const d={};F.forEach(k=>d[k]=$(k).value.trim());
+  if(!d.title){say("กรุณากรอกชื่องาน");$("title").focus();return}
+  d.hours=Math.max(0,Number(d.hours)||0);
+  d.checks=cleanChecks(formChecks);
+  const dup=d.serial&&items.some(i=>i.serial.toLowerCase()===d.serial.toLowerCase()&&i.id!==editId);
+  if(editId&&items.some(i=>i.id===editId)){items=items.map(i=>i.id===editId?{...i,...d}:i)}else{items.push({id:uid(),...d})}
+  const ok=persist();reset();render();if(ok)say(dup?"บันทึกแล้ว แต่ Serial นี้ซ้ำกับงานอื่นที่มีอยู่":"บันทึกแล้ว");
+});
+$("cancel").onclick=reset;
+["input","search","change","keyup"].forEach(ev=>$("q").addEventListener(ev,render));$("flt").addEventListener("change",render);
+$("body").addEventListener("click",e=>{
+  const ed=e.target.dataset.e,dl=e.target.dataset.d;
+  if(ed){const i=items.find(x=>x.id===ed);if(!i)return;editId=ed;F.forEach(k=>$(k).value=i[k]);formChecks=i.checks.map(c=>({...c}));renderChecks();$("save").textContent="บันทึกการแก้ไข";$("cancel").hidden=false;$("title").focus();scrollTo({top:0,behavior:"smooth"})}
+  if(dl){const prev=items;items=items.filter(x=>x.id!==dl);if(editId===dl)reset();persist();render();say("ลบรายการแล้ว",prev)}
+});
+function saveFile(name,text){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+  say("บันทึกไฟล์ "+name+" แล้ว");
+}
+$("backup").onclick=async()=>{
+  try{const r=await fetch("/api/backup",{method:"POST"});const j=await r.json();say(j.ok?"สำรองข้อมูลแล้วที่ "+j.path:"สำรองข้อมูลไม่สำเร็จ")}catch(e){say("สำรองข้อมูลไม่สำเร็จ ตรวจสอบว่าโปรแกรมยังทำงานอยู่")}
+};
+$("restore").onclick=()=>$("file").click();
+$("file").onchange=e=>{
+  const f=e.target.files[0];e.target.value="";
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const j=JSON.parse(r.result),arr=Array.isArray(j)?j:j.items;
+      if(!Array.isArray(arr))throw 0;
+      const ok=clean(arr);
+      if(!ok.length)throw 0;
+      
+      const m=new Map(items.map(i=>[i.id,i]));
+      ok.forEach(i=>m.set(i.id,i));
+      const prev=items;items=[...m.values()];persist();render();say("กู้คืนข้อมูล "+ok.length+" รายการจากไฟล์แล้ว (รวมกับข้อมูลเดิม รายการที่ซ้ำกันถูกแทนที่)",prev);
+    }catch(err){say("ไฟล์ไม่ถูกต้อง ใช้ได้เฉพาะไฟล์ .json ที่สำรองจากโปรแกรมนี้")}
+  };
+  r.readAsText(f);
+};
+const cell=v=>{v=String(v);if(/^[=+\-@	]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+$("csv").onclick=()=>{
+  const rows=[["วันที่ทำงาน","งาน","ประเภทสินค้า","รายละเอียดสินค้า","Serial สินค้า","ชื่อลูกค้า","จังหวัด/พื้นที่","วันที่ตรวจเช็ค","ผู้รับผิดชอบ","สถานะ","ชั่วโมง","รายละเอียด","สรุปผลตรวจ","รายการตรวจสอบ"],...items.map(i=>[i.date,i.title,i.ptype,i.pdesc,i.serial,i.customer,i.area,i.cdate,i.owner,L[i.status],i.hours,i.note,summary(i.checks),i.checks.map((c,n)=>`${n+1}. ${c.item} = ${R[c.result]}${c.by?" ("+c.by+")":""}${c.note?" "+c.note:""}`).join("
+")])];
+  saveFile("starboatthai-"+today()+".csv","﻿"+rows.map(r=>r.map(cell).join(",")).join("
+"));
+};
+renderChecks();render();load().then(render);
+addEventListener("focus",()=>{if(!editId)load().then(render)});
+</script>
+</body>
+</html>
